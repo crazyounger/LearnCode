@@ -36,7 +36,6 @@ public class WeixinSmallVedioActivity extends Activity {
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},111);
         }
-
         mShootBtn.setOnTouchListener(new OnTouchListener() {
 
             @Override
