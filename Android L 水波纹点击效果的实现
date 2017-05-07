@@ -1,0 +1,109 @@
+android 5.0 View实现水波纹原理：
+   L上提供一种动画，Reveal效果。通过拿到view的canvas，然后不断刷新view来完成。
+
+可以定义一个Layout，包裹有水波纹效果的view，实现效果。
+  实现需要解决的问题：
+   1 如何得知用户点击了哪个元素？
+   2 如何获取被点击元素的信息
+   3 如何通过layout重绘水波纹
+   4 如何延迟up事件的分发
+
+问题1 ： 可以在layout中拦截所有的点击事件。重写dispatchTouchEvent。判断down和up事件落在哪个view上
+  int x = (int) event.getRawX();
+  int y = (int) event.getRawY();
+  int action = event.getAction();
+  if(action == MotionEvent.ACTION_DOWN){
+        View touchTarget = getTouchTarget(this,x,y);
+  }else if(action == MotionEVent.ACTION_UP){
+  
+  }
+  
+  
+  
+  View getTouchTargent(View parent,int x,int y){
+    View target = null ;
+    ArrayList<View> touchableViews = parent.getTouchables();
+    for(View child: touchableViews){
+        if(isTouchPointInView(child,x,y)){
+            target = child ;
+            break;
+        }
+    }
+    return target ;
+  }
+  
+  
+  boolean isTouchPointInView(View view,int x,int y){
+        int[] location =new int[2];
+        view.getLocationOnScreen(location);
+        int left = locatoin[0];
+        int top = location[1];
+        int right = view.getMeasureWidth() + left ;
+        int bottom = view.getMeasureHeight() + top ;
+        if(view.isClick() && y >= top && y <= bottom && x >= left && x <= right ){
+            return true ;
+        }
+        return false;
+  }
+  
+  选择绘制的时机：dispatchDraw()
+    view的绘制流程，先绘制背景，然后绘制自己(onDraw),接着绘制子元素(dispatchDraw),最后绘制一些装饰如滚动条（onDrawScrollBars）
+    因此选择在绘制子元素后进行绘制。否则可能子元素遮挡了圆环波纹了。
+    同时 使用 postInvalidateDelayed(long delayMillisenconds,int left,int top,int right,int bottom )对view部分进行重绘
+    
+    protected void dispatchDraw(Canvas canvas){
+        super.dispatchDraw(canvas);
+        if(!mShouldDoAnimation || mTargetWidth <= 0 || mTouchTarget == null ) return;
+        if(mRevealRadius > mMinBetweenWidthAndHeight / 2 ){
+            mRevealRadisu += mRevealRadiusGap * 4 ;
+        }else{
+            mRevealRadius += mRevealRadisuGap ;
+        }
+        int[] location = new int[2];
+        mTouchTarget.getLocationOnScreen(location);
+        int left = location[0] - mLocationInScreen[0];
+        int top = location[1] - mLocationInScreen[1];
+        int right = left + mTouchTarget.getMeasureWidth();
+        int bottom = top + mTouchTarget.getMeasureHeight();
+        
+        canvas.save();
+        canvas.clipRect(left,top,right,bottom);
+        canvas.drawCircle(mCenterX,mCenterY,mRevealRadius,mPaint);
+        canvas.restore();
+        
+        if(mRevealRadius <= mMaxRevealRadius){
+            postInvalidateDelayed(INVALIDATE_DURATION,left,top,right,bottom);
+        }else if(!mIsPressed){
+            mShouldDoAnimation = false;
+            postInvalidDelayed(INVALIDATE_DURATION,left,top,right,bottom);
+        }
+    }
+    
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
