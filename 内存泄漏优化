@@ -1,1 +1,29 @@
 
+（1）垃圾回收机制 GC
+  java的GC内存回收机制： 某对象不再有任何的引用的时候才会进行回收
+ 
+  GC回收机制的原理：
+   可以作为GC Root 引用点的是：
+   1 JavaStack中的引用的对象
+   2 方法区中静态引用指向的对象
+   3 方法区中常量引用指向的对象
+   4 Native 方法中JNI 引用的对象
+   5 Thread--“活着的的” 线程
+（2）如何判断一个对象是垃圾对象 ？
+     一个主观的判断。垃圾回收器不能回收，但是我们不需要的对象即为垃圾对象
+内存泄漏多了容易导致OOM -- 内存溢出，app会崩溃
+
+二 确定我们项目当中或者某几个类里面是否存在内存泄漏
+   1 粗略判断 ： 通过Android Monitor --> System Information -> MemoryUsage
+    查看Objects里面是否有 没有被释放的view 或者Activity
+    
+    命令行模式 adb shell dumpays meminfo 包名 -d
+   2 确定内存泄漏的大致范围：
+    1） Android studio 方式： 看Memeory Monitor 工具
+    
+      检查一个一个的动作（activity的跳转动作）
+   
+
+  
+   
+    
