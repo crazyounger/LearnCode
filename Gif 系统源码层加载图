@@ -1,0 +1,8 @@
+系统Imageview  加载不了Gif
+  解决方式：
+    1 java层： 
+       (1)使用 Movie 类加载gif ，容易OOM
+       (2)使用 GifHelper jar 进行加载,消耗内存
+       (3)使用 GifView jar 进行加载
+    2 c方式加载 ，利用系统源码的gif 相关类进行加载gif
+    
