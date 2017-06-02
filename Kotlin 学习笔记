@@ -1,1 +1,94 @@
 
+Kotlin委托 学习：
+  委托模式 可以代替实现继承。
+  interface Base {
+    fun print()
+  }
+  
+  class BaseImpl(val x: Int) : Base {
+    override fun print(){
+      println(x)
+    }
+  }
+  
+  class Derived(b : Base) : Base by b 
+  
+  fun main(){
+    val b = BaseImpl(3)
+    Derived(b).println()
+  }
+  
+  这个在父类后面的by 指定 b 存储为Derived的内部对象，编译器会生成Base的所有方法寄于b上
+  
+  1 属性委托
+      一个类的某个属性的值不是在类中直接定义，而是由某个类的方法来进行setter 和 getter.默认属性委托
+      都是线程安全的。属性委托适合那些 属性需要复杂计算但是计算过程可以被重用的场合。
+      
+   ```
+   class Example {
+    var p: String by Delegate()
+
+    override fun toString() = "Example Class"
+    }
+
+    class Delegate() {
+        operator fun getValue(thisRef: Any?, prop: KProperty<*>): String {
+            return "$thisRef, thank you for delegating '${prop.name}' to me!"
+        }
+
+        operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {
+            println("$value has been assigned to ${prop.name} in $thisRef")
+        }
+    }
+    
+    fun main(args: Array<String>) {
+      val e = Example()
+      println(e.p)
+      e.p = "NEW"
+    }
+   ```
+   2 lazy 懒加载
+    class LazySample {
+      val lazy : String by lazy {
+        println("computed!")
+        "my lazy "
+      }
+    }
+    
+    fun main(args : Array<String>){
+      val sample = lazySample()
+      println("lazy = ${sample.lazy}")
+      println("lazy = ${sample.lazy}")
+    }
+   
+  3 观察者模式 Observable
+   class User {
+      var name : String by Delegates.observable("no name"){
+         d,old,new ->
+         println("$old -> $new")
+      }
+   }
+   
+   fun main(args : Array<String>){
+      val user = User()
+      user.name = "Carl"
+   }
+   
+  4 notNull 非空属性
+  
+  class User{
+    var name : String by Delegates.notNull()
+    
+    fun init(name : String){
+        this.name = name 
+    }
+  }
+  
+  fun main(args : Array<String>){
+      var user = User()
+      //user.name -> IllegalStateException
+      user.init("Carl")
+      println(user.name)
+  }
+  
+  
