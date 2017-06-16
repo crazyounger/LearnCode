@@ -3,3 +3,44 @@
   
 ## SharedPreference Editor  两种方式提交：  commit(同步方式提交)  apply(异步方式提交)
 
+## 关于MaterialDesign 使用 布局  CoordinatorLayout   AppBarLayout  Toolbar 
+
+## RecyclerView  ItemDecoration 绘制 shadow 产生阴影效果
+
+## MenuItem   
+  在 onCreateOptionsMenu()回调中，可以设置 MenuItem 的展示View(不仅仅是文字展示)
+  需要兼容低版本：
+  MenuItemCompat.setActionView(menuItem,R.layout.view_switch_compat);
+  
+## SmsUtils 获取相关短信
+  注册广播接收:
+  <receiver >
+   <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+  </receiver>
+  需要相关权限：
+  <uses-permission android:name="android.permission.READ_SMS"/>
+  <uses-permission android:name="android.permission.WRITE_SMS"/>
+  <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+ 
+## 系统Window使用注意细节：
+  注册权限：  
+  <!-- 系统弹出悬浮窗 -->
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+  6.0以上系统需要再次确认权限：
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasPermission = checkSelfPermission(Manifest.permission.SYSTEM_ALERT_WINDOW);
+            if(hasPermission != PackageManager.PERMISSION_GRANTED){
+                requestPermissions(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW},REQUEST_PERMISSION_CODE);
+            }
+        }
+
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if (! Settings.canDrawOverlays(PopupWindowActivity.this)) {
+          Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                  Uri.parse("package:" + getPackageName()));
+          startActivityForResult(intent,10);
+      }
+  }
+  
+
+
