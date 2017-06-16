@@ -1,0 +1,5 @@
+## 关于handler 引起内存泄漏解决方式：  
+  使用 开源库： WeakHandler(通过对handler和runnable的弱引用的封装)
+  
+## SharedPreference Editor  两种方式提交：  commit(同步方式提交)  apply(异步方式提交)
+
