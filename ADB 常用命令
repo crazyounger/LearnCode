@@ -1,0 +1,58 @@
+ Linux  常用命令
+   cat  filename | grep something       # 读文件
+   touch/echo 'dsdfsd' > demo.txt    # 写文件
+   
+  
+  二 常用的adb shell 命令
+   
+   adb shell dumpsys activity top    可以查看当前应用的 activity 信息
+   
+   adb shell dumpsys > info.txt    将手机里应用 运行的4大组件 内容重定向到文件中
+   
+   adb shell dumpsys package [pkgname]   打印指定包名的应用的AdroidManifest.xml 内容
+   
+   adb shell dumpsys meminfo [pname|pid] 打印指定进程name或者id的内存信息
+    
+   adb shell dumpsys dbinfo [packageinfo]  打印指定包名的数据库信息
+	
+   adb install [-r]  [apkpath]  安装apk -r 强制覆盖安装或者卸载安装
+   
+   adb uninstall [packagename] 卸载apk
+   
+   adb pull /sdcard/tmp.txt D:\    拉取手机上的文件，权限可以 使用chmod 进行修改
+   
+   adb push D:\tmp.txt /sdcard 推送文件到手机上
+   
+   adb  shell screencap -p /sdcard/screen.png   截取手机图片保存到对应路径
+   可以使用组合命令将截图发送到 电脑上:
+   
+   
+   ###################截图,然后推送到电脑，并用默认程序打开###############
+   adb shell screencap -p /sdcard/screen.png 
+   adb pull /sdcard/screen.png ./  
+   start screen.png
+   ###################
+   
+   
+   adb shell screenrecord /sdcard/tmp.mp4
+   
+   adb shell input text [内容]    
+   
+   //logcat  相关命令：
+   adb logcat -s  [tag]
+   adb logcat |findstr pname|pid/keyword      windows下使用findstr 进行过滤
+   
+   adb shell
+   logcat |grep  pname|pid|keyword
+   
+   ps | grep  过滤内容      #查看设备的进程信息，或者是指定进程的线程信息
+   ps -t [pid]    #查看 pid 对应的线程信息
+   pm clear  [pkgname]   清空制定包名的应用信息
+   
+   pm install  [apk文件]   安装apk 文件 和adb install
+   pm uninstall [apk文件]  卸载apk文件  
+   
+   am start [-D] -n [包名]/[包名].[活动activity名称]     启动一个应用 -D 以debug 方式启动
+   am startservice -n [包 (package) 名]/[包名].[服务 (service) 名]      启动一个服务
+   
+   am broadcast -a [广播动作]    发送一个广播
