@@ -43,4 +43,63 @@
   }
   
 
+## 监听短信相关注意点：
+  1 BroadcastReceiver
+  2 ContentObserver
+  一般使用广播可以收到短信，但是在有些手机上对广播禁用，所以要添加内容监听者，当短信内容发生改变时，做相应的处理
+  
+  private static final String SMS_RECEIVED_ACTION = Telephony.Sms.Intents.SMS_RECEIVED_ACTION;// 接收到短信时的action
+  private static final String SMS_INBOX_URI = "content://sms/inbox";//API level>=23,可直接使用Telephony.Sms.Inbox.CONTENT_URI
+  private static final String SMS_URI = "content://sms";//API level>=23,可直接使用Telephony.Sms.CONTENT_URI
+  static final String[] PROJECTION = new String[]{
+          Telephony.Sms._ID,
+          Telephony.Sms.ADDRESS,
+          Telephony.Sms.BODY,
+          Telephony.Sms.DATE
+  };
+  
+  private ContentObserver mReadSmsObserver = new ContentObserver(new Handler()) {
+      @Override
+      public void onChange(boolean selfChange) {
+          super.onChange(selfChange);
+                  Cursor cursor = getContentResolver().query(Uri.parse(SMS_INBOX_URI), PROJECTION,
+                  Telephony.Sms.READ + "=?", new String[]{"0"}, Telephony.Sms.Inbox.DEFAULT_SORT_ORDER);
+          getSmsCodeFromObserver(cursor);
+      }
+  };
+    
+    
+   private class ReadSmsCodeReceiver extends BroadcastReceiver {
+
+      @Override
+      public void onReceive(Context context, Intent intent) {
+          if (intent.getAction().equals(SMS_RECEIVED_ACTION)) {
+              getSmsCodeFromReceiver(intent);
+          }
+      }
+  }
+  
+    /**
+     * 注册广播接收者
+     */
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter(SMS_RECEIVED_ACTION);
+        filter.addAction(SMS_RECEIVED_ACTION);
+        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+        registerReceiver(mReadSmsCodeReceiver, filter);
+    }
+
+    /**
+     * 注册内容观察者
+     */
+    private void registerObserver() {
+        getContentResolver().registerContentObserver(Uri.parse(SMS_URI), true, mReadSmsObserver);
+    }
+  
+  
+  
+  
+  
+  
+  
 
